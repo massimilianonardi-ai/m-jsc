@@ -1,0 +1,31 @@
+name: Published jsc public install
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pkg-install:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: massimilianonardi-ai/m
+          ref: 47e6055f8ccdccee6906ec1de387b17124e56527
+          path: m-source
+          persist-credentials: false
+      - name: Install published jsc via real pkg, compile JS and CSS
+        shell: sh
+        run: sh tests/install-live.sh m-source
